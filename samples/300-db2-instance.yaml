@@ -1,0 +1,49 @@
+# Copyright (c) 2021 TriggerMesh Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: components.extensions.triggermesh.io/v1alpha1
+kind: DebeziumDB2SourceConnection
+metadata:
+  name: db2src
+spec:
+  debezium_sink_pravega_scope: empty
+  debezium_sink_type: http
+  debezium_sink_http_url: 'http://ptolamaios:8080/rest/dump'
+  debezium_source_connector_class: io.debezium.connector.db2.Db2Connector
+  debezium_source_database_hostname: 192.168.16.16
+  debezium_source_database_port: 50001
+  debezium_source_database_user: db2inst1
+  debezium_source_database_password: 
+    secretKeyRef:
+      name: db2secret
+      key: password
+  debezium_source_database_dbname: SAMPLE
+  debezium_source_database_server_name: cabtest
+  debezium_source_table_include_list: DB2INST1.SALES
+  debezium_source_database_history: io.debezium.relational.history.MemoryDatabaseHistory
+  debezium_source_offset_storage_file_filename: /data/offsets.dat
+  debezium_format_value: cloudevents
+
+  sink:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: sockeye 
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db2secret
+stringData:
+  password: 'changeme'
