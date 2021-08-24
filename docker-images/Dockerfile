@@ -7,13 +7,16 @@ LABEL maintainer="Debezium Community"
 #
 ENV DEBEZIUM_VERSION=1.7.0.Alpha1 \
     SERVER_HOME=/debezium \
-    MAVEN_REPO_CENTRAL="https://repo1.maven.org/maven2"
+    MAVEN_REPO_CENTRAL="https://repo1.maven.org/maven2" \
+    LD_LIBRARY_PATH="/instantclient_21_3"
 
 #
 # Create a directory for Debezium Server
 #
 USER root
 RUN microdnf -y install gzip && \
+    microdnf -y install unzip && \
+    microdnf -y install curl && \
     microdnf clean all && \
     mkdir $SERVER_HOME && \
     chmod 755 $SERVER_HOME
@@ -41,7 +44,25 @@ RUN tar xzf /tmp/debezium.tar.gz -C $SERVER_HOME --strip-components 1
 USER root
 RUN rm -f /tmp/debezium.tar.gz
 
-USER jboss
+#
+# Copy the pre-built connectors for db2
+# (TODO: Ensure that the connector jar files are copied here prior to invoking docker build)
+#
+RUN curl https://repo1.maven.org/maven2/com/ibm/db2/jcc/11.5.0.0/jcc-11.5.0.0.jar --output /debezium/lib/jcc-11.5.0.0.jar
+COPY debezium-connector-db2-1.7.0-SNAPSHOT.jar /debezium/lib/debezium-connector-db2-1.7.0-SNAPSHOT.jar
+
+#
+# Copy the pre-built connectors for oracle
+# (NOTE: Due to licensing restrictions, you must have the instantclient downloaded prior to use)
+#
+COPY debezium-connector-oracle-1.7.0-SNAPSHOT.jar /debezium/lib/debezium-connector-oracle-1.7.0-SNAPSHOT.jar
+
+COPY instantclient-basic-linux.x64-21.3.0.0.0.zip /tmp/instantclient-basic-linux.x64-21.3.0.0.0.zip
+RUN unzip /tmp/instantclient-basic-linux.x64-21.3.0.0.0.zip -d / && \
+    cp /instantclient_21_3/xstreams.jar /debezium/lib/xstreams.jar && \
+    cp /instantclient_21_3/ojdbc8.jar /debezium/lib/ojdbc8.jar && \
+    rm /tmp/instantclient-basic-linux.x64-21.3.0.0.0.zip
+
 #
 # Allow random UID to use Debezium Server
 #
