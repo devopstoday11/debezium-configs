@@ -36,6 +36,6 @@ spec:
 
   sink:
     ref:
-      apiVersion: serving.knative.dev/v1
-      kind: Service
-      name: sockeye 
+      apiVersion: targets.triggermesh.io/v1alpha1
+      kind: AWSSQSTarget
+      name: awstarget

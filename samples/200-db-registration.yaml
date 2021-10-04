@@ -15,17 +15,17 @@
 apiVersion: extensions.triggermesh.io/v1alpha1
 kind: KnativeSourceRegistration
 metadata:
-  name: debezium-db2-source-connection
+  name: debezium-source-connection
 spec:
 
   generate:
     names:
-      kind: DebeziumDB2SourceConnection
-      plural: debeziumdb2sourceconnections
+      kind: DebeziumSourceConnection
+      plural: debeziumsourceconnections
 
   cloudEvents:
     emitted:
-    - type: io.triggermesh.debezium.db2
+    - type: io.triggermesh.debezium
       extensions:
         category: wip
 
@@ -48,8 +48,6 @@ spec:
       type: string
     - name: debezium_sink_type
       type: string
-    - name: debezium_sink_http_url
-      type: string
     - name: debezium_source_connector_class
       type: string
     - name: debezium_source_database_hostname
@@ -62,6 +60,9 @@ spec:
       valueFrom:
         referenceType: secret
     - name: debezium_source_database_dbname
+      type: string
+      # Optional for oracle
+    - name: debezium_source_database_pdb_name
       type: string
     - name: debezium_source_database_server_name
       type: string

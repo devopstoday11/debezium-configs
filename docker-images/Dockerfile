@@ -17,6 +17,7 @@ USER root
 RUN microdnf -y install gzip && \
     microdnf -y install unzip && \
     microdnf -y install curl && \
+    microdnf -y install libaio && \
     microdnf clean all && \
     mkdir $SERVER_HOME && \
     chmod 755 $SERVER_HOME
@@ -56,8 +57,8 @@ COPY debezium-connector-db2-1.7.0-SNAPSHOT.jar /debezium/lib/debezium-connector-
 # (NOTE: Due to licensing restrictions, you must have the instantclient downloaded prior to use)
 #
 COPY debezium-connector-oracle-1.7.0-SNAPSHOT.jar /debezium/lib/debezium-connector-oracle-1.7.0-SNAPSHOT.jar
+RUN curl -o /tmp/instantclient-basic-linux.x64-21.3.0.0.0.zip -O https://download.oracle.com/otn_software/linux/instantclient/213000/instantclient-basic-linux.x64-21.3.0.0.0.zip
 
-COPY instantclient-basic-linux.x64-21.3.0.0.0.zip /tmp/instantclient-basic-linux.x64-21.3.0.0.0.zip
 RUN unzip /tmp/instantclient-basic-linux.x64-21.3.0.0.0.zip -d / && \
     cp /instantclient_21_3/xstreams.jar /debezium/lib/xstreams.jar && \
     cp /instantclient_21_3/ojdbc8.jar /debezium/lib/ojdbc8.jar && \
