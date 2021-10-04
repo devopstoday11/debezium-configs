@@ -7,3 +7,19 @@ spec:
     spec:
       containers:
         - image: docker.io/n3wscott/sockeye:v0.7.0@sha256:e603d8494eeacce966e57f8f508e4c4f6bebc71d095e3f5a0a1abaf42c5f0e48
+
+---
+apiVersion: targets.triggermesh.io/v1alpha1
+kind: AWSSQSTarget
+metadata:
+    name: awstarget
+spec:
+    arn: arn:aws:sqs:us-west-2:043455440429:debeziumtest
+    awsApiKey:
+        secretKeyRef:
+            name: aws
+            key: access_key_id
+    awsApiSecret:
+        secretKeyRef:
+            name: aws
+            key: secret_access_key
