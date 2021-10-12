@@ -1,3 +1,4 @@
+# A service designed for streaming events
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -9,12 +10,29 @@ spec:
         - image: docker.io/n3wscott/sockeye:v0.7.0@sha256:e603d8494eeacce966e57f8f508e4c4f6bebc71d095e3f5a0a1abaf42c5f0e48
 
 ---
+# A TriggerMesh AWS SQS Target
 apiVersion: targets.triggermesh.io/v1alpha1
 kind: AWSSQSTarget
 metadata:
-    name: awstarget
+    name: awssqstarget
 spec:
-    arn: arn:aws:sqs:us-west-2:043455440429:debeziumtest
+    arn: arn:aws:sqs:us-west-2:REPLACEME:debeziumtest
+    awsApiKey:
+        secretKeyRef:
+            name: aws
+            key: access_key_id
+    awsApiSecret:
+        secretKeyRef:
+            name: aws
+            key: secret_access_key
+---
+# A TriggerMesh AWS Lambda Target
+apiVersion: targets.triggermesh.io/v1alpha1
+kind: AWSLambdaTarget
+metadata:
+    name: awslambdatarget
+spec:
+    arn: arn:aws:lambda:us-west-2:REPLACEME:debezium-lambda
     awsApiKey:
         secretKeyRef:
             name: aws

@@ -30,12 +30,13 @@ spec:
   debezium_source_database_dbname: SAMPLE
   debezium_source_database_server_name: cabtest
   debezium_source_table_include_list: DB2INST1.SALES
-  debezium_source_database_history: io.debezium.relational.history.MemoryDatabaseHistory
-  debezium_source_offset_storage_file_filename: /tmp/offsets.dat
+  debezium_source_database_history: io.debezium.relational.history.FileDatabaseHistory
+  debezium_source_database_history_file_filename: /data/db2.history
+  debezium_source_offset_storage_file_filename: /data/offsets.dat
   debezium_format_value: cloudevents
 
   sink:
     ref:
       apiVersion: targets.triggermesh.io/v1alpha1
       kind: AWSSQSTarget
-      name: awstarget
+      name: awssqstarget
