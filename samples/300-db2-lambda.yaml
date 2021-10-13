@@ -15,28 +15,28 @@
 apiVersion: components.extensions.triggermesh.io/v1alpha1
 kind: DebeziumSourceConnection
 metadata:
-  name: oraclesrc
+  name: db2src
 spec:
   debezium_sink_pravega_scope: empty
   debezium_sink_type: http
-  debezium_source_connector_class: io.debezium.connector.oracle.OracleConnector
-  debezium_source_database_hostname: 192.168.107.128
-  debezium_source_database_port: 1521
-  debezium_source_database_user: 'c##dbzuser'
+  debezium_source_connector_class: io.debezium.connector.db2.Db2Connector
+  debezium_source_database_hostname: 192.168.16.16
+  debezium_source_database_port: 50001
+  debezium_source_database_user: db2inst1
   debezium_source_database_password: 
     secretKeyRef:
-      name: oraclesecret
+      name: db2secret
       key: password
-  debezium_source_database_dbname: ORCLCDB
+  debezium_source_database_dbname: SAMPLE
   debezium_source_database_server_name: cabtest
-  debezium_source_table_include_list: dogstore.sales
-  debezium_source_database_pdb_name: orcl
-  debezium_source_database_history: io.debezium.relational.history.MemoryDatabaseHistory
-  debezium_source_offset_storage_file_filename: /tmp/offsets.dat
+  debezium_source_table_include_list: DB2INST1.SALES
+  debezium_source_database_history: io.debezium.relational.history.FileDatabaseHistory
+  debezium_source_database_history_file_filename: /data/db2.history
+  debezium_source_offset_storage_file_filename: /data/offsets.dat
   debezium_format_value: cloudevents
 
   sink:
     ref:
       apiVersion: targets.triggermesh.io/v1alpha1
-      kind: AWSSQSTarget
-      name: awssqstarget
+      kind: AWSLambdaTarget
+      name: awslambdatarget
